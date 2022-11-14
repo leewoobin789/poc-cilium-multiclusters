@@ -1,0 +1,14 @@
+---
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+networking:
+  disableDefaultCNI: true
+  podSubnet: 10.3.0.0/16
+  serviceSubnet: 172.20.3.0/24
+nodes:
+  - image: kindest/node:v1.25.3
+    role: control-plane
+  - image: kindest/node:v1.25.3
+    role: worker
+  - image: kindest/node:v1.25.3
+    role: worker
