@@ -1,18 +1,37 @@
 #!/bin/bash
-. common.sh
 
-##### Initial Validation
-initial() {
-    helm repo update
+DEP=${1}
+
+add_chart() {
+    NAME="${1}"
+    URL="${2}"
+
+    echo "Check existence of $NAME helm repo"
+    REPO_EXISTENCE=$(helm repo list | grep "$URL")
+
+    if [ -z "${REPO_EXISTENCE}" ]; then 
+        echo "$NAME helm chart repo is being added"
+        helm repo add $NAME $URL
+    fi
 }
 
 ##### Cilium SETUP
-#TODO:
 setup_cilium() {
-    add_chart "cilium" "https://helm.cilium.io/"
+    CLUSTER_NAME="${1}"
+    CLUSTER_ID="${2}"
+    IS_FIRST="${3:-true}"
+    INHERITED_CONTEXT="${4}"
 
-    helm install cilium cilium/cilium --version 1.12.3 \
-        --namespace kube-system
+    if [ "$IS_FIRST" = true ]; then
+        cilium install --context kind-${CLUSTER_NAME} \
+            --cluster-id ${CLUSTER_ID} \
+            --cluster-name ${CLUSTER_NAME}
+    else
+        cilium install --context kind-${CLUSTER_NAME} \
+            --cluster-id ${CLUSTER_ID} \
+            --cluster-name ${CLUSTER_NAME} \
+            --inherit-ca ${INHERITED_CONTEXT}
+    fi
 }
 
 ##### Linkerd SETUP
@@ -26,14 +45,14 @@ setup_cilium() {
 setup_kafka_cluster() {
     DEP_CLUSTER_NAME="${1}"
     TOPIC="${2}"
-    if [ -z "${DEP_CLUSTER_NAME}" ] {
+    if [ -z "${DEP_CLUSTER_NAME}" ]; then 
         echo "first paramete of setup_kafka_cluster not added"
         exit 1
-    }
-    if [ -z "${TOPIC}" ] {
+    fi
+    if [ -z "${TOPIC}" ]; then
         echo "second paramete of setup_kafka_cluster not added"
         exit 1
-    }
+    fi
 
     add_chart "confluentinc" "https://confluentinc.github.io/cp-helm-charts"
 
@@ -58,3 +77,8 @@ setup_kafka_cluster() {
     echo "setup_kafka_cluster finished"
 }
 
+echo "start installing dep $DEP"
+
+if [ "${DEP}" = "cilium" ]; then
+    setup_cilium "$2" "$3" "$4" "$5"
+fi
