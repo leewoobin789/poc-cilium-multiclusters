@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "github.com/leewoobin789/poc-cilium-multiclusters/producer-service/grpcserver";
+
+service Order {
+    rpc Create (OrderCreationRequest) returns (OrderCreatinoResponse) {}
+}
+
+message OrderCreationRequest {
+    string name = 1;
+    string familyName = 2;
+    int32 birth = 3;
+    string customId = 4;
+    double unitPrice = 5;
+    int32 amount = 6;
+    double credit = 7;
+    int32 distance = 8;
+}
+
+message OrderCreatinoResponse {
+    OrderCreatinoResponseStatus status = 1;
+    optional string errorMsg = 2;
+}
+enum OrderCreatinoResponseStatus {
+    SUCCESFULL = 0;
+    FAILED = 1;
+}

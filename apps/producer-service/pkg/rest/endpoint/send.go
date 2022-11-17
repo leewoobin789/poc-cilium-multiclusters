@@ -7,29 +7,29 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/leewoobin789/test-camunda/producer-service/src/avroschema"
-	"github.com/leewoobin789/test-camunda/producer-service/src/controller"
-	"github.com/leewoobin789/test-camunda/producer-service/src/producer"
+	"github.com/leewoobin789/poc-cilium-multiclusters/producer-service/pkg/avroschema"
+	"github.com/leewoobin789/poc-cilium-multiclusters/producer-service/pkg/producer"
+	"github.com/leewoobin789/poc-cilium-multiclusters/producer-service/pkg/rest"
 )
 
 var TOPIC = os.Getenv("KAFKA_TOPIC")
 
 type sendEndpoint struct {
-	info     controller.HandlerInfo
+	info     rest.HandlerInfo
 	producer producer.CustomProducer
 }
 
-func newSendEndpoint(producer producer.CustomProducer) controller.Handler {
+func newSendEndpoint(producer producer.CustomProducer) rest.Handler {
 	return sendEndpoint{
-		info: controller.HandlerInfo{
+		info: rest.HandlerInfo{
 			Path:   "/send",
-			Method: controller.GET,
+			Method: rest.GET,
 		},
 		producer: producer,
 	}
 }
 
-func (e sendEndpoint) GetInfo() controller.HandlerInfo {
+func (e sendEndpoint) GetInfo() rest.HandlerInfo {
 	return e.info
 }
 
@@ -47,11 +47,11 @@ func (e sendEndpoint) Run(w http.ResponseWriter, r *http.Request) {
 	num, err := strconv.Atoi(strNum)
 	if err != nil {
 		Response.Message = err.Error()
-		controller.RespondwithJSON(w, http.StatusNotAcceptable, Response)
+		rest.RespondwithJSON(w, http.StatusNotAcceptable, Response)
 	}
 
 	keyProductID := uuid.NewString()
-	value := &avroschema.Order{
+	value := &avroschema.OrderCreated{
 		Name:       "Woobin",
 		FamilyName: "Lee",
 		Birth:      0, // TODO:
@@ -70,5 +70,5 @@ func (e sendEndpoint) Run(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	controller.RespondWithJSON(w, Response)
+	rest.RespondWithJSON(w, Response)
 }

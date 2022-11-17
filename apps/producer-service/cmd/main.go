@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/leewoobin789/test-camunda/producer-service/src/controller/endpoint"
+	"github.com/leewoobin789/poc-cilium-multiclusters/producer-service/pkg/rest/endpoint"
 )
 
 var port string = "8080"

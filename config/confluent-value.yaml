@@ -1,0 +1,20 @@
+cp-zookeeper:
+  enabled: true
+  servers: 3
+  imageTag: 7.3.0
+cp-kafka:
+  enabled: true
+  brokers: 3
+  imageTag: 7.3.0
+cp-schema-registry:
+  enabled: true
+  imageTag: 7.3.0
+cp-control-center:
+  enabled: true
+  imageTag: 7.3.0
+cp-kafka-rest:
+  enabled: false
+cp-kafka-connect:
+  enabled: false
+cp-ksql-server:
+  enabled: false

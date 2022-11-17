@@ -6,9 +6,9 @@ networking:
   podSubnet: 10.1.0.0/16
   serviceSubnet: 172.20.1.0/24
 nodes:
-  - image: kindest/node:v1.25.3
+  - image: kindest/node:v1.24.7 # due to confluent helm chart that contains deprecated version of PodDistruptionBudget
     role: control-plane
-  - image: kindest/node:v1.25.3
+  - image: kindest/node:v1.24.7
     role: worker
-  - image: kindest/node:v1.25.3
+  - image: kindest/node:v1.24.7
     role: worker

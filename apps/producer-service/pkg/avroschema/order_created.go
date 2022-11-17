@@ -18,9 +18,7 @@ import (
 var _ = fmt.Printf
 
 // value schema for incoming topic ex) order
-type Order struct {
-	EventName string `json:"eventName"`
-
+type OrderCreated struct {
 	Name string `json:"name"`
 
 	FamilyName string `json:"familyName"`
@@ -38,11 +36,10 @@ type Order struct {
 	Distance int32 `json:"distance"`
 }
 
-const OrderAvroCRC64Fingerprint = "\x9e\x80\xfa_6%D\xec"
+const OrderCreatedAvroCRC64Fingerprint = "\xcd\x06}#\x9dƴ\x06"
 
-func NewOrder() Order {
-	r := Order{}
-	r.EventName = "order_created"
+func NewOrderCreated() OrderCreated {
+	r := OrderCreated{}
 	r.UnitPrice = 0
 	r.Amount = 0
 	r.Credit = 0
@@ -50,8 +47,8 @@ func NewOrder() Order {
 	return r
 }
 
-func DeserializeOrder(r io.Reader) (Order, error) {
-	t := NewOrder()
+func DeserializeOrderCreated(r io.Reader) (OrderCreated, error) {
+	t := NewOrderCreated()
 	deser, err := compiler.CompileSchemaBytes([]byte(t.Schema()), []byte(t.Schema()))
 	if err != nil {
 		return t, err
@@ -61,8 +58,8 @@ func DeserializeOrder(r io.Reader) (Order, error) {
 	return t, err
 }
 
-func DeserializeOrderFromSchema(r io.Reader, schema string) (Order, error) {
-	t := NewOrder()
+func DeserializeOrderCreatedFromSchema(r io.Reader, schema string) (OrderCreated, error) {
+	t := NewOrderCreated()
 
 	deser, err := compiler.CompileSchemaBytes([]byte(schema), []byte(t.Schema()))
 	if err != nil {
@@ -73,12 +70,8 @@ func DeserializeOrderFromSchema(r io.Reader, schema string) (Order, error) {
 	return t, err
 }
 
-func writeOrder(r Order, w io.Writer) error {
+func writeOrderCreated(r OrderCreated, w io.Writer) error {
 	var err error
-	err = vm.WriteString(r.EventName, w)
-	if err != nil {
-		return err
-	}
 	err = vm.WriteString(r.Name, w)
 	if err != nil {
 		return err
@@ -114,70 +107,65 @@ func writeOrder(r Order, w io.Writer) error {
 	return err
 }
 
-func (r Order) Serialize(w io.Writer) error {
-	return writeOrder(r, w)
+func (r OrderCreated) Serialize(w io.Writer) error {
+	return writeOrderCreated(r, w)
 }
 
-func (r Order) Schema() string {
-	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"default\":\"order_created\",\"name\":\"eventName\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"familyName\",\"type\":\"string\"},{\"name\":\"birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"customId\",\"type\":\"string\"},{\"default\":0,\"name\":\"unitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.Order\",\"type\":\"record\"}"
+func (r OrderCreated) Schema() string {
+	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"familyName\",\"type\":\"string\"},{\"name\":\"birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"customId\",\"type\":\"string\"},{\"default\":0,\"name\":\"unitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.OrderCreated\",\"type\":\"record\"}"
 }
 
-func (r Order) SchemaName() string {
-	return "de.topic.in.Order"
+func (r OrderCreated) SchemaName() string {
+	return "de.topic.in.OrderCreated"
 }
 
-func (_ Order) SetBoolean(v bool)    { panic("Unsupported operation") }
-func (_ Order) SetInt(v int32)       { panic("Unsupported operation") }
-func (_ Order) SetLong(v int64)      { panic("Unsupported operation") }
-func (_ Order) SetFloat(v float32)   { panic("Unsupported operation") }
-func (_ Order) SetDouble(v float64)  { panic("Unsupported operation") }
-func (_ Order) SetBytes(v []byte)    { panic("Unsupported operation") }
-func (_ Order) SetString(v string)   { panic("Unsupported operation") }
-func (_ Order) SetUnionElem(v int64) { panic("Unsupported operation") }
+func (_ OrderCreated) SetBoolean(v bool)    { panic("Unsupported operation") }
+func (_ OrderCreated) SetInt(v int32)       { panic("Unsupported operation") }
+func (_ OrderCreated) SetLong(v int64)      { panic("Unsupported operation") }
+func (_ OrderCreated) SetFloat(v float32)   { panic("Unsupported operation") }
+func (_ OrderCreated) SetDouble(v float64)  { panic("Unsupported operation") }
+func (_ OrderCreated) SetBytes(v []byte)    { panic("Unsupported operation") }
+func (_ OrderCreated) SetString(v string)   { panic("Unsupported operation") }
+func (_ OrderCreated) SetUnionElem(v int64) { panic("Unsupported operation") }
 
-func (r *Order) Get(i int) types.Field {
+func (r *OrderCreated) Get(i int) types.Field {
 	switch i {
 	case 0:
-		w := types.String{Target: &r.EventName}
-
-		return w
-
-	case 1:
 		w := types.String{Target: &r.Name}
 
 		return w
 
-	case 2:
+	case 1:
 		w := types.String{Target: &r.FamilyName}
 
 		return w
 
-	case 3:
+	case 2:
 		w := types.Int{Target: &r.Birth}
 
 		return w
 
-	case 4:
+	case 3:
 		w := types.String{Target: &r.CustomId}
 
 		return w
 
-	case 5:
+	case 4:
 		w := types.Double{Target: &r.UnitPrice}
 
 		return w
 
-	case 6:
+	case 5:
 		w := types.Int{Target: &r.Amount}
 
 		return w
 
-	case 7:
+	case 6:
 		w := types.Double{Target: &r.Credit}
 
 		return w
 
-	case 8:
+	case 7:
 		w := types.Int{Target: &r.Distance}
 
 		return w
@@ -186,49 +174,42 @@ func (r *Order) Get(i int) types.Field {
 	panic("Unknown field index")
 }
 
-func (r *Order) SetDefault(i int) {
+func (r *OrderCreated) SetDefault(i int) {
 	switch i {
-	case 0:
-		r.EventName = "order_created"
-		return
-	case 5:
+	case 4:
 		r.UnitPrice = 0
 		return
-	case 6:
+	case 5:
 		r.Amount = 0
 		return
-	case 7:
+	case 6:
 		r.Credit = 0
 		return
-	case 8:
+	case 7:
 		r.Distance = 0
 		return
 	}
 	panic("Unknown field index")
 }
 
-func (r *Order) NullField(i int) {
+func (r *OrderCreated) NullField(i int) {
 	switch i {
 	}
 	panic("Not a nullable field index")
 }
 
-func (_ Order) AppendMap(key string) types.Field { panic("Unsupported operation") }
-func (_ Order) AppendArray() types.Field         { panic("Unsupported operation") }
-func (_ Order) HintSize(int)                     { panic("Unsupported operation") }
-func (_ Order) Finalize()                        {}
+func (_ OrderCreated) AppendMap(key string) types.Field { panic("Unsupported operation") }
+func (_ OrderCreated) AppendArray() types.Field         { panic("Unsupported operation") }
+func (_ OrderCreated) HintSize(int)                     { panic("Unsupported operation") }
+func (_ OrderCreated) Finalize()                        {}
 
-func (_ Order) AvroCRC64Fingerprint() []byte {
-	return []byte(OrderAvroCRC64Fingerprint)
+func (_ OrderCreated) AvroCRC64Fingerprint() []byte {
+	return []byte(OrderCreatedAvroCRC64Fingerprint)
 }
 
-func (r Order) MarshalJSON() ([]byte, error) {
+func (r OrderCreated) MarshalJSON() ([]byte, error) {
 	var err error
 	output := make(map[string]json.RawMessage)
-	output["eventName"], err = json.Marshal(r.EventName)
-	if err != nil {
-		return nil, err
-	}
 	output["name"], err = json.Marshal(r.Name)
 	if err != nil {
 		return nil, err
@@ -264,27 +245,13 @@ func (r Order) MarshalJSON() ([]byte, error) {
 	return json.Marshal(output)
 }
 
-func (r *Order) UnmarshalJSON(data []byte) error {
+func (r *OrderCreated) UnmarshalJSON(data []byte) error {
 	var fields map[string]json.RawMessage
 	if err := json.Unmarshal(data, &fields); err != nil {
 		return err
 	}
 
 	var val json.RawMessage
-	val = func() json.RawMessage {
-		if v, ok := fields["eventName"]; ok {
-			return v
-		}
-		return nil
-	}()
-
-	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.EventName); err != nil {
-			return err
-		}
-	} else {
-		r.EventName = "order_created"
-	}
 	val = func() json.RawMessage {
 		if v, ok := fields["name"]; ok {
 			return v
